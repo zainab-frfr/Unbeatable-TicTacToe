@@ -1,12 +1,6 @@
 import checkingConditions
 from numpy import inf
 
-def printBoard(board):
-    for i in range(0,9):
-        print(board[i]+" ", end='')
-        if i == 2 or i == 5 or i == 8:
-            print('\n')
-
 def possibleMoves(board):
     moves = []
     for i in range(9):
@@ -14,27 +8,10 @@ def possibleMoves(board):
             moves.append(i)
     return moves
 
-def checkWin(currentPlayer, board):
-    #checking horizontally
-    if (board[0] == board[1] == board[2] == currentPlayer) or (board[3] == board[4] == board[5] == currentPlayer) or (board[6] == board[7] == board[8] == currentPlayer):
-        return True
-    
-    #checking vertically
-    elif (board[0] == board[3] == board[6] == currentPlayer) or (board[1] == board[4] == board[7] == currentPlayer) or (board[2] == board[5] == board[8] == currentPlayer):
-        return True
-        
-    #checking right diagonal
-    elif board[0] == board[4] == board[8] == currentPlayer:
-        return True
-    
-    #checking left diagonal
-    elif board[2] == board[4] == board[6] == currentPlayer:
-        return True
-
 def utility(board):
-    if checkWin('O',board):
+    if checkingConditions.checkWin('O',board):
         return 1 
-    elif checkWin('X',board):
+    elif checkingConditions.checkWin('X',board):
         return -1
     elif checkingConditions.checkDraw(board):
         return 0
