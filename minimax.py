@@ -62,7 +62,5 @@ def RecursiveMinimax(board, maximizingPlayer):
 def minimax(board):
     _, move= RecursiveMinimax(board, True)
     return move
-    # move, _,_= Max(board,11,True)
-    # return move 
 
 
