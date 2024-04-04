@@ -1,6 +1,6 @@
 import checkingConditions
 from numpy import inf
-
+depth = 0
 def possibleMoves(board):
     moves = []
     for i in range(9):
@@ -24,52 +24,45 @@ def isTerminalState(board):
     return True
 
 
-def Max(board):
-    if isTerminalState(board):
+def RecursiveMinimax(board, maximizingPlayer):
+
+    if isTerminalState(board) or checkingConditions.checkGameEnd('X', board) or checkingConditions.checkGameEnd('O', board) or checkingConditions.checkDraw(board):
         return utility(board), None
     
-    bestValue = -inf 
-    bestMove = None 
+    moves = possibleMoves(board)
+    bestMove = None
 
-    children = possibleMoves(board)
+    if maximizingPlayer:
+        bestValue = -float('inf')
+        for move in moves:
+            board[move] = 'O'
+            value, _ = RecursiveMinimax(board, False)
+            board[move] = '-'
 
-    for move in children:
-        new_board = board.copy()
-        new_board[move] = 'O'
+            if value > bestValue:
+                bestValue = value
+                bestMove = move
 
-        value, _ = Min(new_board)
-        bestValue = max(bestValue,value)
+        return bestValue, bestMove
+        
+        
+    else:
+        bestValue = float('inf')
+        for move in moves:
+            board[move] = 'X'
+            value, _ = RecursiveMinimax(board, True)
+            board[move] = '-'
 
-        if value >= bestValue:
-            bestMove = move
+            if value < bestValue:
+                bestValue = value
+                bestMove = move
+                
+        return bestValue, bestMove
     
-    return bestValue , bestMove
-
-def Min(board):
-
-    if isTerminalState(board):
-        return utility(board), None
-    
-    bestValue = inf 
-    bestMove = None 
-
-    children = possibleMoves(board)
-
-    for move in children:
-        new_board = board.copy()
-        new_board[move] = 'X'
-
-        value, _ = Max(new_board)
-        bestValue = min(bestValue,value)
-
-        if value <= bestValue:
-            bestMove = move
-    
-    return bestValue , bestMove
-
-
 def minimax(board):
-    _, move= Max(board)
+    _, move= RecursiveMinimax(board, True)
     return move
+    # move, _,_= Max(board,11,True)
+    # return move 
 
 
