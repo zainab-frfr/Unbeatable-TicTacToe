@@ -10,6 +10,10 @@
     <style>
         #board {
             display: grid;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             grid-template-columns: repeat(3, 100px);
             grid-template-rows: repeat(3, 100px);
             gap: 2px;
@@ -25,17 +29,29 @@
             font-size: 24px;
             cursor: pointer;
         }
+        #draw-button {
+            display: none; /* Initially hide the button */
+            margin-top: 20px;
+            padding: 1rem 2rem;
+            background-color: #38b2ac;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
-    <h1>Tic Tac Toe</h1>
+    <h1 align="center">Tic Tac Toe</h1>
     <div id="board">
         <!-- Create the game board dynamically using JavaScript -->
     </div>
-
+    <button id="draw-button">It's a Draw! Play Again?</button>
     <script>
+        var flag = false;
         // Function to initialize the game board
         var board = ["-", "-", "-", "-", "-", "-", "-", "-", "-"];
         function initBoard() {
@@ -47,22 +63,28 @@
         function renderBoard(board) {
             var boardDiv = document.getElementById("board");
             boardDiv.innerHTML = "";
-            for (var i = 0; i < board.length; i++) {
-                var cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.textContent = board[i];
-                cell.setAttribute("data-index", i);
-                // Event listener to handle user's click on the cell
-                cell.addEventListener("click", function (event) {
-                    if (event.target.textContent === "-") {
-                        var index = event.target.getAttribute("data-index");
-                        userMove(index);
-                    }
-                });
-                boardDiv.appendChild(cell);
+            if (!board || board.length === 0){
+                 console.log("empty");
+                flag = true;
+                window.location.href = "/draw";
+            }
+            else{    
+                for (var i = 0; i < board.length; i++) {
+                    var cell = document.createElement("div");
+                    cell.classList.add("cell");
+                    cell.textContent = board[i];
+                    cell.setAttribute("data-index", i);
+                    // Event listener to handle user's click on the cell
+                    cell.addEventListener("click", function (event) {
+                        if (event.target.textContent === "-") {
+                            var index = event.target.getAttribute("data-index");
+                            userMove(index);
+                            }
+                        });
+                    boardDiv.appendChild(cell);
+                }
             }
         }
-
         
        // Function to handle user's move
         function userMove(index) {
@@ -90,13 +112,8 @@
                 success: function (response) {
                     // Render the updated board received from the server
                     renderBoard(response.board);
-                    if (response.game_over) {
-                        alert("Game Over!");
-                        initBoard(); // Reset the board after game over
-                    } else {
-                        // If the game is not over, make the AI's move
-                        makeAIMove();
-                    }
+                    makeAIMove();
+                    
                 }
             });
         }
@@ -117,14 +134,16 @@
 
                         // Check if the game is over
                         if (response.game_over) {
-                            alert("Game Over!");
-                            initBoard(); // Reset the board after game over
-                        }
+                            checkGameOver(response.game_over); 
+                            }
                     }
                 });
             }
-
-
+            function checkGameOver(isGameOver) {
+                if (isGameOver && !flag){
+                    window.location.href = "/ai_winner";
+                }
+            }
 
         // Render the initial board when the page loads
         $(document).ready(function () {
